@@ -1,0 +1,27 @@
+.contact-item {
+  margin-bottom: 5px;
+}
+
+.contact-item__name {
+  font-weight: bold;
+}
+
+.contact-item__number {
+  margin-left: 10px;
+  color: #999;
+}
+.contact-item__delete {
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  padding: 3px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.contact-item__delete:hover,
+.contact-item__delete:focus {
+  background-color: #e63939;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 77, 77, 0.5);
+}

@@ -1,0 +1,15 @@
+.contact-filter {
+  margin-bottom: 10px;
+}
+
+.contact-filter__label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.contact-filter__input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
