@@ -22,9 +22,10 @@ function ContactFilter({ filter, setFilter }) {
     </div>
   );
 }
+
 ContactFilter.propTypes = {
   filter: PropTypes.string.isRequired,
-  onFilterChange: PropTypes.func.isRequired,
+  setFilter: PropTypes.func.isRequired,
 };
 
 export default ContactFilter;

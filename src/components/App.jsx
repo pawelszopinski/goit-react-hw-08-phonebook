@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import ContactFilter from './ContactFilter/ContactFilter';
 
 function App() {
-  const [state, setState] = useState({
-    contacts: [
-      { id: nanoid(), name: 'John Doe', number: '123456789' },
-      { id: nanoid(), name: 'James Bond', number: '987654321' },
-      { id: nanoid(), name: 'Mike Tyson', number: '456789123' },
-    ],
-    filter: '',
+  const [state, setState] = useState(() => {
+    const storedContacts = localStorage.getItem('contacts');
+    return {
+      contacts: storedContacts ? JSON.parse(storedContacts) : [],
+      filter: '',
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(state.contacts));
+  }, [state.contacts]);
 
   function addContact(contact) {
     const existingContact = state.contacts.find(
@@ -29,6 +32,7 @@ function App() {
       }));
     }
   }
+
   function deleteContact(id) {
     setState(prevState => ({
       ...prevState,
