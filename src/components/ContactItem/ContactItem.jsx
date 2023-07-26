@@ -1,11 +1,15 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { removeContact } from 'redux/phonebookSlice';
 import './ContactItem.css';
-import PropTypes from 'prop-types';
 
-function ContactItem({ contact, onDelete }) {
+function ContactItem({ contact }) {
+  const dispatch = useDispatch();
+
   function handleDelete() {
-    onDelete(contact.id);
+    dispatch(removeContact(contact.id));
   }
+
   return (
     <li className="contact-item">
       <span className="contact-item__name">{contact.name}</span>
@@ -16,12 +20,5 @@ function ContactItem({ contact, onDelete }) {
     </li>
   );
 }
-ContactItem.propTypes = {
-  contact: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    number: PropTypes.string.isRequired,
-  }).isRequired,
-  onDelete: PropTypes.func.isRequired,
-};
+
 export default ContactItem;

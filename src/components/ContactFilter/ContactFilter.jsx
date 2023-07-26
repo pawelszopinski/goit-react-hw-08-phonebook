@@ -1,10 +1,14 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFilter } from 'redux/phonebookSlice';
 import './ContactFilter.css';
-import PropTypes from 'prop-types';
 
-function ContactFilter({ filter, setFilter }) {
+function ContactFilter() {
+  const filter = useSelector(state => state.phonebook.filter);
+  const dispatch = useDispatch();
+
   function handleChange(event) {
-    setFilter(event.target.value);
+    dispatch(setFilter(event.target.value));
   }
 
   return (
@@ -22,10 +26,5 @@ function ContactFilter({ filter, setFilter }) {
     </div>
   );
 }
-
-ContactFilter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  setFilter: PropTypes.func.isRequired,
-};
 
 export default ContactFilter;
