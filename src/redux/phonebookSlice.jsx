@@ -13,17 +13,30 @@ const phonebookSlice = createSlice({
   reducers: {
     addContact: (state, action) => {
       state.contacts.push(action.payload);
+      localStorage.setItem('phonebookContacts', JSON.stringify(state.contacts));
     },
     removeContact: (state, action) => {
       state.contacts = state.contacts.filter(
         contact => contact.id !== action.payload
       );
+      localStorage.setItem('phonebookContacts', JSON.stringify(state.contacts));
     },
     setFilter: (state, action) => {
       state.filter = action.payload;
     },
+    initializeStateFromLocalStorage: state => {
+      const localContacts = localStorage.getItem('phonebookContacts');
+      if (localContacts) {
+        state.contacts = JSON.parse(localContacts);
+      }
+    },
   },
 });
 
-export const { addContact, removeContact, setFilter } = phonebookSlice.actions;
+export const {
+  addContact,
+  removeContact,
+  setFilter,
+  initializeStateFromLocalStorage,
+} = phonebookSlice.actions;
 export default phonebookSlice.reducer;
