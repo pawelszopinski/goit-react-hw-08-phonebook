@@ -1,14 +1,39 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+const apiUrl = 'https://64c2e27feb7fd5d6ebd06acf.mockapi.io';
+
+export const fetchContacts = createAsyncThunk(
+  'phonebook/fetchContacts',
+  async () => {
+    const response = await axios.get(`${apiUrl}/contacts`);
+    return response.data;
+  }
+);
+
+export const addContactToBackend = createAsyncThunk(
+  'phonebook/addContactToBackend',
+  async contact => {
+    const response = await axios.post(`${apiUrl}/contacts`, contact);
+    return response.data;
+  }
+);
+
+export const removeContactFromBackend = createAsyncThunk(
+  'phonebook/removeContactFromBackend',
+  async contactId => {
+    await axios.delete(`${apiUrl}/contacts/${contactId}`);
+    return contactId;
+  }
+);
 
 const phonebookSlice = createSlice({
   name: 'phonebook',
   initialState: {
-    contacts: [
-      { id: '1', name: 'John Doe', number: '123456789' },
-      { id: '2', name: 'James Bond', number: '987654321' },
-      { id: '3', name: 'Mike Tyson', number: '456789123' },
-    ],
+    contacts: [],
     filter: '',
+    status: 'idle',
+    error: null,
   },
   reducers: {
     addContact: (state, action) => {
@@ -31,12 +56,29 @@ const phonebookSlice = createSlice({
       }
     },
   },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchContacts.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.status = 'success';
+        state.contacts = action.payload;
+      })
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.status = 'error';
+        state.error = action.error.message;
+      })
+      .addCase(addContactToBackend.fulfilled, (state, action) => {
+        state.contacts.push(action.payload);
+      })
+      .addCase(removeContactFromBackend.fulfilled, (state, action) => {
+        state.contacts = state.contacts.filter(
+          contact => contact.id !== action.payload
+        );
+      });
+  },
 });
 
-export const {
-  addContact,
-  removeContact,
-  setFilter,
-  initializeStateFromLocalStorage,
-} = phonebookSlice.actions;
+export const { addContact, removeContact, setFilter } = phonebookSlice.actions;
 export default phonebookSlice.reducer;

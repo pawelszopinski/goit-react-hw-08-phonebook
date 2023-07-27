@@ -1,13 +1,13 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { removeContact } from 'redux/phonebookSlice';
+import { removeContactFromBackend } from 'redux/phonebookSlice';
 import './ContactItem.css';
 
 function ContactItem({ contact }) {
   const dispatch = useDispatch();
 
   function handleDelete() {
-    dispatch(removeContact(contact.id));
+    dispatch(removeContactFromBackend(contact.id));
   }
 
   return (

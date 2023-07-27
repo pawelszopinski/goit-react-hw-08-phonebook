@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { nanoid } from 'nanoid';
-import { addContact } from 'redux/phonebookSlice';
+import { addContactToBackend } from 'redux/phonebookSlice';
 import './ContactForm.css';
 
 function ContactForm() {
@@ -11,7 +11,7 @@ function ContactForm() {
   function handleSubmit(event) {
     event.preventDefault();
     if (formData.name) {
-      dispatch(addContact({ id: nanoid(), ...formData }));
+      dispatch(addContactToBackend({ id: nanoid(), ...formData }));
       setFormData({ name: '', number: '' });
     }
   }
