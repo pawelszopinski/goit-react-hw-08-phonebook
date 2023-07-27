@@ -1,7 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import contactsReducer, {
-  initializeStateFromLocalStorage,
-} from './phonebookSlice';
+import contactsReducer from './phonebookSlice';
 
 const store = configureStore({
   reducer: {
@@ -9,5 +7,4 @@ const store = configureStore({
   },
 });
 
-store.dispatch(initializeStateFromLocalStorage());
 export default store;
