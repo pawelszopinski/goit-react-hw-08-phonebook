@@ -4,8 +4,12 @@ import axios from 'axios';
 const apiUrl = 'https://connections-api.herokuapp.com';
 
 export const fetchContacts = createAsyncThunk('phonebook/fetchContacts', async () => {
-  const response = await axios.get(`${apiUrl}/contacts`);
-  return response.data;
+  try {
+    const response = await axios.get(`${apiUrl}/contacts`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 });
 
 export const addContactToBackend = createAsyncThunk('phonebook/addContactToBackend', async (contact) => {
@@ -49,6 +53,7 @@ const phonebookSlice = createSlice({
       .addCase(fetchContacts.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.error.message;
+        console.error('Fetch contacts error:', action.error);
       })
       .addCase(addContactToBackend.fulfilled, (state, action) => {
         state.contacts.push(action.payload);

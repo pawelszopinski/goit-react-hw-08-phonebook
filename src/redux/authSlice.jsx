@@ -76,23 +76,19 @@ export const getUserInfo = createAsyncThunk('auth/getUserInfo', async () => {
     const response = await fetch('https://connections-api.herokuapp.com/users/current', {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${getTokenFromLocalStorage()}`, // Przesyłamy token w nagłówku Authorization
+        Authorization: `Bearer ${getTokenFromLocalStorage()}`,
       },
     });
 
+    const data = await response.json();
     if (response.ok) {
-      const data = await response.json();
-      console.log('User info received:', data);
+      console.log('User info:', data); // Dodaj ten console.log, aby sprawdzić dane użytkownika
       return data;
-    } else if (response.status === 401) {
-      console.log('User is not authenticated.');
-      // Użytkownik nie jest uwierzytelniony, więc zwracamy null
-      return null;
     } else {
-      throw new Error('Get user info failed');
+      throw new Error(data.message);
     }
   } catch (error) {
-    console.error('Get user info error:', error.message);
+    console.error('Get user info error:', error); // Dodaj ten console.log w przypadku błędu
     throw error.message;
   }
 });
@@ -111,6 +107,7 @@ const authSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.isLoggedIn = true;
       state.token = action.payload;
+      localStorage.setItem('token', action.payload);
     });
 
     // Reducer do obsługi sukcesu wylogowywania

@@ -17,7 +17,7 @@ function UserMenu() {
         console.error('Logout error:', error);
       });
   }
-
+  console.log('User:', user);
   return (
     <div className="user-menu">
       {/* Wyświetlamy nazwę użytkownika i email tylko jeśli użytkownik jest zalogowany */}

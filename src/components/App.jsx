@@ -9,6 +9,7 @@ import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import ContactFilter from './ContactFilter/ContactFilter';
 import { getUserInfo } from 'redux/authSlice';
+import { fetchContacts } from 'redux/phonebookSlice';
 
 function App() {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -23,9 +24,16 @@ function App() {
         .catch(error => {
           console.error('User info loading error:', error);
         });
+        dispatch(fetchContacts())
+        .then(() => {
+          console.log('Contacts fetched successfully!');
+        })
+        .catch(error => {
+          console.error('Error fetching contacts:', error);
+        });
     }
   }, [dispatch, isLoggedIn]);
-
+  console.log('isLoggedIn:', isLoggedIn);
   return (
     <div className="contact-app">
       <h1>Phonebook</h1>
