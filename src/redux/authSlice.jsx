@@ -1,47 +1,32 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-// Funkcja pomocnicza do pobrania tokenu z pamięci lokalnej
-const getTokenFromLocalStorage = () => {
-  return localStorage.getItem('token');
+axios.defaults.baseURL = 'https://connections-api.herokuapp.com/';
+
+const setAuthHeader = token => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+
+const clearAuthHeader = () => {
+  axios.defaults.headers.common.Authorization = '';
 };
 
 // Thunk do obsługi procesu logowania
 export const login = createAsyncThunk('auth/login', async (credentials) => {
   try {
-    const response = await fetch('https://connections-api.herokuapp.com/users/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      return data.token;
-    } else {
-      throw new Error(data.message);
-    }
+    const response = await axios.post('/users/login', credentials);
+    setAuthHeader(response.data.token); // Ustawienie nagłówka z tokenem po zalogowaniu
+    return response.data.token;
   } catch (error) {
     throw error.message;
   }
 });
 
 // Thunk do obsługi procesu wylogowywania
-export const logout = createAsyncThunk('auth/logout', async () => {
+export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
-    const response = await fetch('https://connections-api.herokuapp.com/users/logout', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${getTokenFromLocalStorage()}`, // Przesyłamy token w nagłówku Authorization
-      },
-    });
-
-    if (response.ok) {
-      return;
-    } else {
-      throw new Error('Logout failed');
-    }
+    await axios.post('/users/logout');
+    clearAuthHeader(); // Usunięcie nagłówka z tokenem po wylogowaniu
   } catch (error) {
     throw error.message;
   }
@@ -50,55 +35,29 @@ export const logout = createAsyncThunk('auth/logout', async () => {
 // Thunk do obsługi procesu rejestracji
 export const register = createAsyncThunk('auth/register', async (userData) => {
   try {
-    const response = await fetch('https://connections-api.herokuapp.com/users/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      return data.token;
-    } else {
-      throw new Error(data.message);
-    }
+    const response = await axios.post('/users/signup', userData);
+    setAuthHeader(response.data.token); // Ustawienie nagłówka z tokenem po rejestracji
+    return response.data.token;
   } catch (error) {
     throw error.message;
   }
 });
 
 // Thunk do pobierania informacji o użytkowniku
-export const getUserInfo = createAsyncThunk('auth/getUserInfo', async () => {
+export const getUserInfo = createAsyncThunk('auth/getUserInfo', async (_, thunkAPI) => {
   try {
-    console.log('Fetching user info...');
-    const response = await fetch('https://connections-api.herokuapp.com/users/current', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${getTokenFromLocalStorage()}`,
-      },
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      console.log('User info:', data); // Dodaj ten console.log, aby sprawdzić dane użytkownika
-      return data;
-    } else {
-      throw new Error(data.message);
-    }
+    const response = await axios.get('/users/current');
+    return response.data;
   } catch (error) {
-    console.error('Get user info error:', error); // Dodaj ten console.log w przypadku błędu
     throw error.message;
   }
 });
 
-
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    isLoggedIn: !!getTokenFromLocalStorage(),
-    token: getTokenFromLocalStorage(),
+    isLoggedIn: !!localStorage.getItem('token'), // Sprawdzenie, czy token znajduje się w pamięci lokalnej
+    token: localStorage.getItem('token'),
     user: null, // Dodajemy pole "user" do przechowywania informacji o zalogowanym użytkowniku
   },
   reducers: {},
@@ -107,7 +66,7 @@ const authSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.isLoggedIn = true;
       state.token = action.payload;
-      localStorage.setItem('token', action.payload);
+      localStorage.setItem('token', action.payload); // Zapisanie tokenu w pamięci lokalnej po zalogowaniu
     });
 
     // Reducer do obsługi sukcesu wylogowywania
@@ -115,8 +74,7 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.token = null;
       state.user = null; // Po wylogowaniu czyścimy również dane użytkownika
-      // Czyścimy token z pamięci lokalnej po wylogowaniu
-      localStorage.removeItem('token');
+      localStorage.removeItem('token'); // Usunięcie tokenu z pamięci lokalnej po wylogowaniu
     });
 
     // Reducer do obsługi sukcesu rejestracji
