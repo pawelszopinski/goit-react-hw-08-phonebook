@@ -1,18 +1,14 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const apiUrl = 'https://connections-api.herokuapp.com';
 
-// Funkcja pomocnicza do pobrania tokenu z pamięci lokalnej
-const getTokenFromLocalStorage = () => {
-  return localStorage.getItem('token');
-};
-
-export const fetchContacts = createAsyncThunk('phonebook/fetchContacts', async () => {
+export const fetchContacts = createAsyncThunk('phonebook/fetchContacts', async (_, thunkAPI) => {
   try {
+    const token = thunkAPI.getState().auth.token;
     const response = await axios.get(`${apiUrl}/contacts`, {
       headers: {
-        Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -21,23 +17,42 @@ export const fetchContacts = createAsyncThunk('phonebook/fetchContacts', async (
   }
 });
 
-export const addContactToBackend = createAsyncThunk('phonebook/addContactToBackend', async (contact) => {
-  const response = await axios.post(`${apiUrl}/contacts`, contact);
-  return response.data;
-});
-
-export const removeContactFromBackend = createAsyncThunk('phonebook/removeContactFromBackend', async (contactId) => {
-  await axios.delete(`${apiUrl}/contacts/${contactId}`, {
-    headers: {
-      Authorization: `Bearer ${getTokenFromLocalStorage()}`,
-    },
-  });
-  return contactId;
-});
-
-export const setFilter = createAsyncThunk('phonebook/setFilter', async (filterValue) => {
+export const addContactToBackend = createAsyncThunk('phonebook/addContactToBackend', async (contact, thunkAPI) => {
   try {
-    const response = await axios.get(`${apiUrl}/contacts?filter=${filterValue}`);
+    const token = thunkAPI.getState().auth.token;
+    const response = await axios.post(`${apiUrl}/contacts`, contact, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
+export const removeContactFromBackend = createAsyncThunk('phonebook/removeContactFromBackend', async (contactId, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.token;
+    await axios.delete(`${apiUrl}/contacts/${contactId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return contactId;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
+export const setFilter = createAsyncThunk('phonebook/setFilter', async (filterValue, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.token;
+    const response = await axios.get(`${apiUrl}/contacts?filter=${filterValue}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return {
       filter: filterValue,
       filteredContacts: response.data,
@@ -52,24 +67,21 @@ const phonebookSlice = createSlice({
   initialState: {
     contacts: [],
     filter: '',
-    status: 'idle',
-    error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchContacts.pending, (state) => {
         state.status = 'loading';
-        state.error = null;
       })
       .addCase(fetchContacts.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.error = null;
         state.contacts = action.payload;
       })
       .addCase(fetchContacts.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.error.message;
+        console.error('Fetch contacts error:', action.error);
       })
       .addCase(addContactToBackend.fulfilled, (state, action) => {
         state.contacts.push(action.payload);
@@ -79,17 +91,15 @@ const phonebookSlice = createSlice({
       })
       .addCase(setFilter.pending, (state) => {
         state.status = 'loading';
-        state.error = null;
       })
       .addCase(setFilter.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.error = null;
         state.filter = action.payload.filter;
         state.contacts = action.payload.filteredContacts;
       })
       .addCase(setFilter.rejected, (state, action) => {
         state.status = 'error';
-        state.error = action.error.message;
+        state.error = action.payload;
       });
   },
 });

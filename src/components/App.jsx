@@ -38,7 +38,9 @@ function App() {
     <div className="contact-app">
       <h1>Phonebook</h1>
       <Navigation />
-
+      <ContactForm/>
+      <ContactList/>
+      <ContactFilter/>
       {isLoggedIn && <UserMenu />}
 
       <Routes>

@@ -10,7 +10,7 @@ function ContactForm() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    if (formData.name) {
+    if (formData.name && formData.number) {
       dispatch(addContactToBackend({ id: nanoid(), ...formData }));
       setFormData({ name: '', number: '' });
     }
