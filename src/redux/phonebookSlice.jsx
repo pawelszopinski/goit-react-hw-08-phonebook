@@ -1,11 +1,20 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const apiUrl = 'https://connections-api.herokuapp.com';
 
+// Funkcja pomocnicza do pobrania tokenu z pamięci lokalnej
+const getTokenFromLocalStorage = () => {
+  return localStorage.getItem('token');
+};
+
 export const fetchContacts = createAsyncThunk('phonebook/fetchContacts', async () => {
   try {
-    const response = await axios.get(`${apiUrl}/contacts`);
+    const response = await axios.get(`${apiUrl}/contacts`, {
+      headers: {
+        Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.message);
@@ -18,7 +27,11 @@ export const addContactToBackend = createAsyncThunk('phonebook/addContactToBacke
 });
 
 export const removeContactFromBackend = createAsyncThunk('phonebook/removeContactFromBackend', async (contactId) => {
-  await axios.delete(`${apiUrl}/contacts/${contactId}`);
+  await axios.delete(`${apiUrl}/contacts/${contactId}`, {
+    headers: {
+      Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+    },
+  });
   return contactId;
 });
 
@@ -30,7 +43,7 @@ export const setFilter = createAsyncThunk('phonebook/setFilter', async (filterVa
       filteredContacts: response.data,
     };
   } catch (error) {
-    return error.message;
+    throw new Error(error.message);
   }
 });
 
@@ -39,21 +52,24 @@ const phonebookSlice = createSlice({
   initialState: {
     contacts: [],
     filter: '',
+    status: 'idle',
+    error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchContacts.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(fetchContacts.fulfilled, (state, action) => {
         state.status = 'idle';
+        state.error = null;
         state.contacts = action.payload;
       })
       .addCase(fetchContacts.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.error.message;
-        console.error('Fetch contacts error:', action.error);
       })
       .addCase(addContactToBackend.fulfilled, (state, action) => {
         state.contacts.push(action.payload);
@@ -63,15 +79,17 @@ const phonebookSlice = createSlice({
       })
       .addCase(setFilter.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(setFilter.fulfilled, (state, action) => {
         state.status = 'idle';
+        state.error = null;
         state.filter = action.payload.filter;
         state.contacts = action.payload.filteredContacts;
       })
       .addCase(setFilter.rejected, (state, action) => {
         state.status = 'error';
-        state.error = action.payload;
+        state.error = action.error.message;
       });
   },
 });

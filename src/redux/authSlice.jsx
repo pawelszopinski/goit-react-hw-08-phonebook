@@ -1,4 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+const apiUrl = 'https://connections-api.herokuapp.com';
 
 // Funkcja pomocnicza do pobrania tokenu z pamięci lokalnej
 const getTokenFromLocalStorage = () => {
@@ -8,16 +11,9 @@ const getTokenFromLocalStorage = () => {
 // Thunk do obsługi procesu logowania
 export const login = createAsyncThunk('auth/login', async (credentials) => {
   try {
-    const response = await fetch('https://connections-api.herokuapp.com/users/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
+    const response = await axios.post(`${apiUrl}/users/login`, credentials);
+    const data = response.data;
+    if (response.status === 200) {
       return data.token;
     } else {
       throw new Error(data.message);
@@ -30,14 +26,13 @@ export const login = createAsyncThunk('auth/login', async (credentials) => {
 // Thunk do obsługi procesu wylogowywania
 export const logout = createAsyncThunk('auth/logout', async () => {
   try {
-    const response = await fetch('https://connections-api.herokuapp.com/users/logout', {
-      method: 'POST',
+    const response = await axios.post(`${apiUrl}/users/logout`, null, {
       headers: {
         Authorization: `Bearer ${getTokenFromLocalStorage()}`, // Przesyłamy token w nagłówku Authorization
       },
     });
 
-    if (response.ok) {
+    if (response.status === 200) {
       return;
     } else {
       throw new Error('Logout failed');
@@ -50,16 +45,9 @@ export const logout = createAsyncThunk('auth/logout', async () => {
 // Thunk do obsługi procesu rejestracji
 export const register = createAsyncThunk('auth/register', async (userData) => {
   try {
-    const response = await fetch('https://connections-api.herokuapp.com/users/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
+    const response = await axios.post(`${apiUrl}/users/signup`, userData);
+    const data = response.data;
+    if (response.status === 201) {
       return data.token;
     } else {
       throw new Error(data.message);
@@ -73,15 +61,14 @@ export const register = createAsyncThunk('auth/register', async (userData) => {
 export const getUserInfo = createAsyncThunk('auth/getUserInfo', async () => {
   try {
     console.log('Fetching user info...');
-    const response = await fetch('https://connections-api.herokuapp.com/users/current', {
-      method: 'GET',
+    const response = await axios.get(`${apiUrl}/users/current`, {
       headers: {
         Authorization: `Bearer ${getTokenFromLocalStorage()}`,
       },
     });
 
-    const data = await response.json();
-    if (response.ok) {
+    const data = response.data;
+    if (response.status === 200) {
       console.log('User info:', data); // Dodaj ten console.log, aby sprawdzić dane użytkownika
       return data;
     } else {
@@ -92,7 +79,6 @@ export const getUserInfo = createAsyncThunk('auth/getUserInfo', async () => {
     throw error.message;
   }
 });
-
 
 const authSlice = createSlice({
   name: 'auth',
