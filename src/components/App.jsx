@@ -38,11 +38,14 @@ function App() {
     <div className="contact-app">
       <h1>Phonebook</h1>
       <Navigation />
-      <ContactForm/>
-      <ContactList/>
-      <ContactFilter/>
-      {isLoggedIn && <UserMenu />}
 
+      {isLoggedIn && <UserMenu />}
+      {isLoggedIn && (
+        <>
+          <ContactForm />
+          <ContactFilter />
+        </>
+      )}
       <Routes>
         {/* Prywatne trasy - wyświetlamy je tylko jeśli użytkownik jest zalogowany */}
         {isLoggedIn && (
