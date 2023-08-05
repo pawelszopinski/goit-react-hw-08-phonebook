@@ -9,6 +9,7 @@ import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import ContactFilter from './ContactFilter/ContactFilter';
 import { getUserInfo } from 'redux/authSlice';
+import styles from './App.module.css'
 
 function App() {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -30,8 +31,8 @@ function App() {
   }, [dispatch, isLoggedIn]);
   console.log('isLoggedIn:', isLoggedIn);
   return (
-    <div className="contact-app">
-      <h1>Phonebook</h1>
+    <div className={styles.contactApp}>
+      <h1 className={styles.headerApp}>Phonebook</h1>
       <Navigation />
 
       {isLoggedIn && <UserMenu />}

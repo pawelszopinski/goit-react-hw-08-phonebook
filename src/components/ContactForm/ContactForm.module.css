@@ -1,24 +1,24 @@
-.contact-form {
+.contactForm {
   margin-bottom: 20px;
 }
 
-.contact-form__group {
+.contactForm__group {
   margin-bottom: 10px;
 }
 
-.contact-form__label {
+.contactForm__label {
   display: block;
   margin-bottom: 5px;
 }
 
-.contact-form__input {
+.contactForm__input {
   width: 98%;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 3px;
 }
 
-.contact-form__button {
+.contactForm__button {
   background-color: #4caf50;
   color: #fff;
   border: none;
@@ -27,9 +27,12 @@
   cursor: pointer;
 }
 
-.contact-form__button:hover,
-.contact-form__button:focus {
+.contactForm__button:hover,
+.contactForm__button:focus {
   background-color: #45a049;
   outline: none;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.5);
+}
+fieldset {
+  margin-top: 20px;
 }

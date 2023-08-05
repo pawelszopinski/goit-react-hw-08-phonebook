@@ -1,0 +1,61 @@
+/* RegisterForm.module.css */
+
+.registerForm {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .registerForm__legend {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 0 5px; 
+   
+  }
+  
+  .registerForm__group {
+    margin-bottom: 20px;
+  }
+  
+  .registerForm__label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .registerForm__input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .registerForm__button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .registerForm__button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsywność */
+  @media screen and (max-width: 768px) {
+    .registerForm {
+      max-width: 100%;
+    }
+  }
+  

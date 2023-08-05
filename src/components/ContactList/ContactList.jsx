@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import ContactItem from '../ContactItem/ContactItem';
-import './ContactList.css';
+import styles from './ContactList.module.css'
 
 function ContactList() {
   const contacts = useSelector(state => state.phonebook.contacts);
@@ -11,7 +11,7 @@ function ContactList() {
     contact.name.toLowerCase().includes(filterValue)
   );
   return (
-    <ul className="contact-list">
+    <ul className={styles.contactList}>
       {filteredContacts.map(contact => (
         <ContactItem key={contact.id} contact={contact} />
       ))}

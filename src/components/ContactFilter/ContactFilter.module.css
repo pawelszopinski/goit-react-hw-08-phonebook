@@ -1,0 +1,17 @@
+.contactFilter {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.contactFilter__label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.contactFilter__input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}

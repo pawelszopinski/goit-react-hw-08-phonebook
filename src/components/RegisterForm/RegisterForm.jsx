@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { register } from 'redux/authSlice';
+import styles from './RegisterForm.module.css'
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -29,58 +30,58 @@ function RegisterForm() {
   }
 
   return (
-    <form className="register-form" onSubmit={handleSubmit}>
-      <fieldset>
-        <legend>Register</legend>
-        <div className="register-form__group">
-          <label htmlFor="name" className="register-form__label">
-            Name:
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className="register-form__input"
-            pattern="[A-Za-z]{2,}"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="register-form__group">
-          <label htmlFor="email" className="register-form__label">
-            Email:
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            className="register-form__input"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="register-form__group">
-          <label htmlFor="password" className="register-form__label">
-            Password:
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            className="register-form__input"
-            pattern=".{7,}"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button className="register-form__button" type="submit">
-          Register
-        </button>
-      </fieldset>
-    </form>
+    <form className={styles.registerForm} onSubmit={handleSubmit}>
+    <fieldset>
+      <legend className={styles.registerForm__legend}>Register</legend>
+      <div className={styles.registerForm__group}>
+        <label htmlFor="name" className={styles.registerForm__label}>
+          Name:
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          className={styles.registerForm__input}
+          pattern="[A-Za-z]{2,}"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div className={styles.registerForm__group}>
+        <label htmlFor="email" className={styles.registerForm__label}>
+          Email:
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          className={styles.registerForm__input}
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div className={styles.registerForm__group}>
+        <label htmlFor="password" className={styles.registerForm__label}>
+          Password:
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          className={styles.registerForm__input}
+          pattern=".{7,}"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <button className={styles.registerForm__button} type="submit">
+        Register
+      </button>
+    </fieldset>
+  </form>
   );
 }
 
