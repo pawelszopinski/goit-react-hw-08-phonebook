@@ -39,9 +39,14 @@ export const register = createAsyncThunk('auth/register', async (userData) => {
 
 export const getUserInfo = createAsyncThunk('auth/getUserInfo', async () => {
   try {
+    const token = getTokenFromLocalStorage();
+    if (!token) {
+      // Token nie istnieje, więc zwracamy null lub inny odpowiedni stan
+      return null;
+    }
     const response = await axios.get(`${apiUrl}/users/current`, {
       headers: {
-        Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;

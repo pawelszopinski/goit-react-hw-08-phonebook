@@ -9,27 +9,22 @@ import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import ContactFilter from './ContactFilter/ContactFilter';
 import { getUserInfo } from 'redux/authSlice';
-import { fetchContacts } from 'redux/phonebookSlice';
 
 function App() {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (isLoggedIn) {
+    // Sprawdź, czy użytkownik jest zalogowany
+    const token = localStorage.getItem('token');
+    if (isLoggedIn && token) {
+      // Wywołaj funkcję getUserInfo, jeśli użytkownik jest zalogowany
       dispatch(getUserInfo())
         .then(() => {
           console.log('User info loaded successfully!');
         })
         .catch(error => {
           console.error('User info loading error:', error);
-        });
-        dispatch(fetchContacts())
-        .then(() => {
-          console.log('Contacts fetched successfully!');
-        })
-        .catch(error => {
-          console.error('Error fetching contacts:', error);
         });
     }
   }, [dispatch, isLoggedIn]);
