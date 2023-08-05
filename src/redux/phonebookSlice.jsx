@@ -45,22 +45,7 @@ export const removeContactFromBackend = createAsyncThunk('phonebook/removeContac
   }
 });
 
-export const setFilter = createAsyncThunk('phonebook/setFilter', async (filterValue, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.token;
-    const response = await axios.get(`${apiUrl}/contacts?filter=${filterValue}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return {
-      filter: filterValue,
-      filteredContacts: response.data,
-    };
-  } catch (error) {
-    throw new Error(error.message);
-  }
-});
+
 
 const phonebookSlice = createSlice({
   name: 'phonebook',
@@ -68,7 +53,10 @@ const phonebookSlice = createSlice({
     contacts: [],
     filter: '',
   },
-  reducers: {},
+  reducers: { setFilter: (state, action) => {
+    state.filter = action.payload;
+  },
+},
   extraReducers: (builder) => {
     builder
       .addCase(fetchContacts.pending, (state) => {
@@ -89,19 +77,8 @@ const phonebookSlice = createSlice({
       .addCase(removeContactFromBackend.fulfilled, (state, action) => {
         state.contacts = state.contacts.filter((contact) => contact.id !== action.payload);
       })
-      .addCase(setFilter.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(setFilter.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.filter = action.payload.filter;
-        state.contacts = action.payload.filteredContacts;
-      })
-      .addCase(setFilter.rejected, (state, action) => {
-        state.status = 'error';
-        state.error = action.payload;
-      });
+      
   },
 });
-
+export const { setFilter } = phonebookSlice.actions;
 export default phonebookSlice.reducer;

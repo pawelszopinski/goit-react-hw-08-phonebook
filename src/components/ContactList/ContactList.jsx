@@ -4,8 +4,12 @@ import ContactItem from '../ContactItem/ContactItem';
 import './ContactList.css';
 
 function ContactList() {
-  const filteredContacts = useSelector(state => state.phonebook.contacts);
+  const contacts = useSelector(state => state.phonebook.contacts);
+  const filterValue = useSelector(state => state.phonebook.filter.toLowerCase());
 
+  const filteredContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filterValue)
+  );
   return (
     <ul className="contact-list">
       {filteredContacts.map(contact => (

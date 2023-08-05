@@ -3,14 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFilter } from 'redux/phonebookSlice';
 import './ContactFilter.css';
 
+
 function ContactFilter() {
-  const filter = useSelector(state => state.phonebook.filter);
+  const filterValue = useSelector(state => state.phonebook.filter);
   const dispatch = useDispatch();
 
-  function handleChange(event) {
+  const handleChange = event => {
     const { value } = event.target;
     dispatch(setFilter(value));
-  }
+  };
 
   return (
     <div className="contact-filter">
@@ -21,7 +22,7 @@ function ContactFilter() {
         type="text"
         id="filter"
         className="contact-filter__input"
-        value={filter}
+        value={filterValue}
         onChange={handleChange}
       />
     </div>
